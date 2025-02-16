@@ -4,17 +4,15 @@ autoscaling:
   enabled: false
 
 image:
-  repository: michaeltrusov/test-service
-  pullPolicy: Always
+  repository: youtilitycr.azurecr.io
+  pullPolicy: IfNotPresent
   tag: ""
-imagePullSecrets:
-  - name: dockerhub-secret
+imagePullSecrets: []
+  
 ingress:
   enabled: false
   tls: []
 
-namespace: "identity"
-nameOverride: "identity-service"
 nodeSelector: {}
 
 podAnnotations: {}

@@ -41,6 +41,17 @@ jobs:
           image_name: test-service
           image_tag: "v1.0.0"
 
+  test-pack-and-push-helm-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - dotnet-project/pack_and_push_helm:
+          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_name: "test-service"
+          helm_chart_version: "v1.0.0"
+
 workflows:
   test-deploy:
     jobs:
@@ -49,6 +60,8 @@ workflows:
       - test-build-and-test-command:
           filters: *filters
       - test-pack-and-push-docker-command:
+          filters: *filters
+      - test-pack-and-push-helm-command:
           filters: *filters
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
@@ -62,5 +75,6 @@ workflows:
             - orb-tools/pack
             - test-build-and-test-command
             - test-pack-and-push-docker-command
+            - test-pack-and-push-helm-command
           context: orb-publishing
           filters: *release-filters
