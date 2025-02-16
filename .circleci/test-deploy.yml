@@ -23,6 +23,8 @@ jobs:
   test-build-and-test-command:
     docker:
       - image: 'mcr.microsoft.com/dotnet/sdk:8.0'
+    environment:
+      HELM_EXPERIMENTAL_OCI: "1"
     steps:
       - checkout
 
