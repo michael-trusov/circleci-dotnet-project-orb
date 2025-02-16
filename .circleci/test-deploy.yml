@@ -36,6 +36,8 @@ jobs:
       - checkout
 
       - dotnet-project/pack_and_push_docker:
+          dockerfile: "tests/Test.Service/Dockerfile"
+          docker_context: "tests/Test.Service"
           image_name: my-docker-image
           image_tag: latest          
 
