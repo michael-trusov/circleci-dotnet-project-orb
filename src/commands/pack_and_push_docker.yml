@@ -20,11 +20,18 @@ steps:
 
   - run:
       name: "Pack and Push: build '<< parameters.imageName >>:<< parameters.imageTag >>' version of docker image"
-      command: |
-        docker build -f Dockerfile -t "$ACR_URL/<< parameters.imageName >>:<< parameters.imageTag >>" .
+      environment:
+        CONTAINER_REGISTRY_URL: $ACR_URL
+        IMAGE_NAME: << parameters.imageName >>
+        IMAGE_TAG: << parameters.imageTag >>
+      command: <<include(scripts/build_docker.sh)>>
 
   - run:
       name: "Pack and Push: push '<< parameters.imageName >>:<< parameters.imageTag >>' version of docker image to Container Registry"
-      command: |
-        docker login -u $ACR_USERNAME -p $ACR_PASSWORD $ACR_URL
-        docker push $ACR_URL/<< parameters.imageName >>:<< parameters.imageTag >>
+      environment:
+        CONTAINER_REGISTRY_URL: $ACR_URL
+        CONTAINER_REGISTRY_USERNAME: $ACR_USERNAME
+        CONTAINER_REGISTRY_PASSWORD: $ACR_PASSWORD
+        IMAGE_NAME: << parameters.imageName >>
+        IMAGE_TAG: << parameters.imageTag >>
+      command: <<include(scripts/push_docker.sh)>>

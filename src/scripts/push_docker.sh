@@ -1,0 +1,5 @@
+#!/bin/bash
+#shellcheck disable=all
+
+docker login -u $CONTAINER_REGISTRY_USERNAME -p $CONTAINER_REGISTRY_PASSWORD $CONTAINER_REGISTRY_URL
+docker push "${CONTAINER_REGISTRY_URL}/${IMAGE_NAME:$IMAGE_TAG}"
