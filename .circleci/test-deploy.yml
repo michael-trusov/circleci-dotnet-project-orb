@@ -100,7 +100,7 @@ workflows:
           filters: *filters
       - test-pack-and-push-helm-command:
           requires:
-            - test-pack-and-push-docker-command
+            - test-pack-and-push-docker-dv-command
           filters: *filters
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
