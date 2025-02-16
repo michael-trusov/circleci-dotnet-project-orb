@@ -48,7 +48,7 @@ steps:
       at: << parameters.attached_workspace >>
 
   - run:
-      name: "Pack and Push: build '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image"
+      name: "Pack and Push: build version of docker image"
       environment:
         DOCKERFILE: << parameters.dockerfile >>
         DOCKER_CONTEXT: << parameters.docker_context >>
@@ -59,7 +59,7 @@ steps:
       command: <<include(scripts/build_docker.sh)>>
 
   - run:
-      name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
+      name: "Pack and Push: push version of docker image to Container Registry"
       environment:
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: ""
