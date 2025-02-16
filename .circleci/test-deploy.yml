@@ -60,8 +60,12 @@ workflows:
       - test-build-and-test-command:
           filters: *filters
       - test-pack-and-push-docker-command:
+          requires:
+            - test-build-and-test-command
           filters: *filters
       - test-pack-and-push-helm-command:
+          requires:
+            - test-pack-and-push-docker-command
           filters: *filters
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
