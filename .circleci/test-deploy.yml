@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
 
-      - dotnet-project/build-and-test:
+      - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln          
 
 workflows:
