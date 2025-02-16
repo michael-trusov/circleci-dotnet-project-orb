@@ -13,6 +13,7 @@ parameters:
 
 steps:
   - checkout
+  - setup_remote_docker
 
   - run:
       name: "Pack and Push: build '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image"
