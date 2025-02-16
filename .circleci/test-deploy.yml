@@ -31,7 +31,7 @@ jobs:
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln          
 
-  test-pack-and-push-docker-command:
+  test-pack-and-push-docker-sv-command:
     docker:
       - image: 'cimg/base:current'
     steps:
@@ -42,6 +42,35 @@ jobs:
           docker_context: "tests/Test.Service"
           image_name: test-service
           image_tag: "v1.0.0"
+
+  test-pack-and-push-docker-dv-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - run: 
+          name: "Create dotnet workspace"
+          command: |
+            mkdir -p /home/circleci/dotnet
+
+      - attach_workspace:
+          at: /home/circleci
+
+      - run:
+          name: "Create file with version"
+          command: |
+            echo "v1.0.2" > /home/circleci/dotnet/image_tag
+
+      - dotnet-project/pack_and_push_docker_dv:
+          attached_workspace: "/home/circleci"
+          debug: "true"
+          dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
+          docker_context: "tests/Test.Service"
+          image_name: test-service
+          image_tag: ""
+          input_args_folder: "dotnet"
+          input_args_tag_file: "image_tag"
 
   test-pack-and-push-helm-command:
     docker:

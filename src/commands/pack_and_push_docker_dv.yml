@@ -11,6 +11,11 @@ parameters:
     default: "dotnet"
     description: "Name of the attached workspace"
 
+  debug:
+    type: string
+    default: "false"
+    description: "Enable debug mode. Default is false."
+
   dockerfile:
     type: string
     default: "Dockerfile"
@@ -49,13 +54,15 @@ steps:
         DOCKER_CONTEXT: << parameters.docker_context >>
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: ""
+        INPUT_PARAM_DEBUG: << parameters.debug >>
         INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>
       command: <<include(scripts/build_docker.sh)>>
 
   - run:
       name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
-      environment:
+      environment:        
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: ""
-        INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>
+        INPUT_PARAM_DEBUG: << parameters.debug >>
+        INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>        
       command: <<include(scripts/push_docker.sh)>>

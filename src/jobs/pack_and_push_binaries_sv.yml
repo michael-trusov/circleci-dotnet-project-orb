@@ -4,11 +4,6 @@ description: >
 executor: docker_executor
 
 parameters:
-  attached_workspace:
-    type: string
-    default: "dotnet"
-    description: "Name of the attached workspace"
-
   debug:
     type: string
     default: "false"
@@ -35,16 +30,6 @@ parameters:
       Docker image tag. If the value of this parameter is empty, the image tag will be read from
       the file specified in the input_args_tag_file parameter
 
-  input_args_folder:
-    type: string
-    default: "input_args"
-    description: "Folder includes files with input arguments"
-
-  input_args_tag_file:
-    type: string
-    default: "image_tag"
-    description: "File with image tag"
-
   helm_repo:
     type: string
     description: "Helm repository URL"
@@ -65,7 +50,7 @@ parameters:
 steps:
   - checkout
 
-  - pack_and_push_docker:
+  - pack_and_push_docker_sv:
       dockerfile: << parameters.dockerfile >>
       docker_context: << parameters.docker_context >>
       image_name: << parameters.image_name >>
