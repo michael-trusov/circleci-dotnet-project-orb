@@ -49,7 +49,7 @@ steps:
 
   - run:
       name: "Pack and Push: build '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image"
-      environment:        
+      environment:
         DOCKERFILE: << parameters.dockerfile >>
         DOCKER_CONTEXT: << parameters.docker_context >>
         IMAGE_NAME: << parameters.image_name >>
@@ -60,9 +60,9 @@ steps:
 
   - run:
       name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
-      environment:        
+      environment:
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: ""
         INPUT_PARAM_DEBUG: << parameters.debug >>
-        INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>        
+        INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>
       command: <<include(scripts/push_docker.sh)>>
