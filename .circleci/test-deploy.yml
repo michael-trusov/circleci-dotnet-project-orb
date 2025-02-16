@@ -39,7 +39,7 @@ jobs:
           dockerfile: "tests/Test.Service/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
-          image_tag: 1.0.0          
+          image_tag: "v1.0.0"
 
 workflows:
   test-deploy:
