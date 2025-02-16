@@ -105,19 +105,19 @@ workflows:
           filters: *filters
 
       # The orb must be re-packed for publishing, and saved to the workspace.
-      - orb-tools/pack:
-          filters: *release-filters
-      - orb-tools/publish:
-          orb_name: mt-lab/dotnet-project
-          vcs_type: << pipeline.project.type >>
-          pub_type: production
-          # Ensure this job requires all test jobs and the pack job.
-          requires:
-            - orb-tools/pack
-            - test-build-and-test-command
-            - test-pack-and-push-docker-command
-            - test-pack-and-push-helm-command
-            - dotnet-project/build_and_test
-            - dotnet-project/pack_and_push_binaries
-          context: orb-publishing
-          filters: *release-filters
+      # - orb-tools/pack:
+      #     filters: *release-filters
+      # - orb-tools/publish:
+      #     orb_name: mt-lab/dotnet-project
+      #     vcs_type: << pipeline.project.type >>
+      #     pub_type: production
+      #     # Ensure this job requires all test jobs and the pack job.
+      #     requires:
+      #       - orb-tools/pack
+      #       - test-build-and-test-command
+      #       - test-pack-and-push-docker-command
+      #       - test-pack-and-push-helm-command
+      #       - dotnet-project/build_and_test
+      #       - dotnet-project/pack_and_push_binaries
+      #     context: orb-publishing
+      #     filters: *release-filters
