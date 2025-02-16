@@ -1,0 +1,61 @@
+description: >
+  This command pack binaries in Docker image and push it to the registry. This command expect
+  environment variables ACR_URL, ACR_USERNAME and ACR_PASSWORD to be set in the context.
+  ---
+  Note: '_dv' suffix means 'dynamic version', version that should be passed via specific file and can
+    be calculated in runtime.
+
+parameters:
+  attached_workspace:
+    type: string
+    default: "dotnet"
+    description: "Name of the attached workspace"
+
+  dockerfile:
+    type: string
+    default: "Dockerfile"
+    description: "Path to the Dockerfile"
+
+  docker_context:
+    type: string
+    default: "."
+    description: "Path to the Docker context"
+
+  image_name:
+    type: string
+    description: "Docker image name"
+
+  input_args_folder:
+    type: string
+    default: "input_args"
+    description: "Folder includes files with input arguments"
+
+  input_args_tag_file:
+    type: string
+    default: "image_tag"
+    description: "File with image tag"
+
+steps:
+  - checkout
+  - setup_remote_docker
+
+  - attach_workspace:
+      at: << parameters.attached_workspace >>
+
+  - run:
+      name: "Pack and Push: build '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image"
+      environment:        
+        DOCKERFILE: << parameters.dockerfile >>
+        DOCKER_CONTEXT: << parameters.docker_context >>
+        IMAGE_NAME: << parameters.image_name >>
+        IMAGE_TAG: ""
+        INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>
+      command: <<include(scripts/build_docker.sh)>>
+
+  - run:
+      name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
+      environment:
+        IMAGE_NAME: << parameters.image_name >>
+        IMAGE_TAG: ""
+        INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>
+      command: <<include(scripts/push_docker.sh)>>

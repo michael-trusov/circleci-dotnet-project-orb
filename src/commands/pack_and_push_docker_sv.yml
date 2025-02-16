@@ -1,6 +1,7 @@
 description: >
   This command pack binaries in Docker image and push it to the registry. This command expect
   environment variables ACR_URL, ACR_USERNAME and ACR_PASSWORD to be set in the context.
+  Note: '_sv' suffix means 'static version', version that should be passed via parameter.
 
 parameters:
   dockerfile:

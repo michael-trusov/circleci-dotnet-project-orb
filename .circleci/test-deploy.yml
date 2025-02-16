@@ -37,7 +37,7 @@ jobs:
     steps:
       - checkout
 
-      - dotnet-project/pack_and_push_docker:
+      - dotnet-project/pack_and_push_docker_sv:
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
