@@ -6,7 +6,7 @@ parameters:
   imageName:
     type: string
     description: "Docker image name"
-  
+
   imageTag:
     type: string
     description: "Docker image tag"
