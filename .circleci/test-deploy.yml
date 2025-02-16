@@ -67,8 +67,7 @@ jobs:
           debug: "true"
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
-          image_name: test-service
-          image_tag: ""
+          image_name: test-service          
           input_args_folder: "dotnet"
           input_args_tag_file: "image_tag"
 
