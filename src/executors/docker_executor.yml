@@ -12,7 +12,7 @@ environment:
 
 parameters:
   tag:
-    default: 8.0
+    default: "8.0"
     description: >
       The version of the .NET SDK to use.
     type: string
