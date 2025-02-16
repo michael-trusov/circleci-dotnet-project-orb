@@ -13,6 +13,16 @@ parameters:
     type: string
     description: "The path to the solution file, i.e. myProject.sln"
 
+  dockerfile:
+    type: string
+    default: "Dockerfile"
+    description: "Path to the Dockerfile"
+
+  docker_context:
+    type: string
+    default: "."
+    description: "Path to the Docker context"
+
   image_name:
     type: string
     description: "Docker image name"
@@ -44,6 +54,8 @@ steps:
       project_solution: << parameters.project_solution >>
 
   - pack_and_push_docker:
+      dockerfile: << parameters.dockerfile >>
+      docker_context: << parameters.docker_context >>
       image_name: << parameters.image_name >>
       image_tag: << parameters.image_tag >>
 
