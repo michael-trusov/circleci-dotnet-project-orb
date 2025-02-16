@@ -70,8 +70,10 @@ workflows:
           requires:
             - test-pack-and-push-docker-command
           filters: *filters
-      - dotnet-project/produce_binaries:
+      - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
+          filters: *filters
+      - dotnet-project/pack_and_push_binaries:
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
@@ -82,6 +84,24 @@ workflows:
           helm_chart_version: "v1.0.1"
           requires:
             - test-pack-and-push-helm-command
+          filters: *filters
+
+      - orb-tools/pack:
+          filters: *filters
+
+      - orb-tools/publish:
+          orb_name: mt-lab/dotnet-project
+          vcs_type: << pipeline.project.type >>
+          pub_type: dev
+          # Ensure this job requires all test jobs and the pack job.
+          requires:
+            - orb-tools/pack
+            - test-build-and-test-command
+            - test-pack-and-push-docker-command
+            - test-pack-and-push-helm-command
+            - dotnet-project/build_and_test
+            - dotnet-project/pack_and_push_binaries
+          context: orb-publishing
           filters: *filters
 
       # The orb must be re-packed for publishing, and saved to the workspace.
@@ -97,5 +117,7 @@ workflows:
             - test-build-and-test-command
             - test-pack-and-push-docker-command
             - test-pack-and-push-helm-command
+            - dotnet-project/build_and_test
+            - dotnet-project/pack_and_push_binaries
           context: orb-publishing
           filters: *release-filters
