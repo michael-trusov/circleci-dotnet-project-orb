@@ -51,6 +51,7 @@ jobs:
 
       - dotnet-project/pack_and_push_helm:
           helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_destination: "tests/Test.Service/k8s/helm"
           helm_chart_name: "test-service"
           helm_chart_version: "v1.0.0"
 

@@ -6,6 +6,10 @@ parameters:
     type: string
     description: "Helm repository URL"
 
+  helm_chart_destination:
+    type: string
+    description: "Path to the Helm chart directory"
+
   helm_chart_name:
     type: string
     description: "Helm chart name"
@@ -24,6 +28,7 @@ steps:
       name: "Pack and Push: package and publish Helm chart"
       environment:
         HELM_REPO: << parameters.helm_repo >>
+        HELM_CHART_DESTINATION: << parameters.helm_chart_destination >>
         HELM_CHART_NAME: << parameters.helm_chart_name >>
         HELM_CHART_VERSION: << parameters.helm_chart_version >>
         HELM_EXPERIMENTAL_OCI: "1"
