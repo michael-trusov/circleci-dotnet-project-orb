@@ -90,9 +90,13 @@ workflows:
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - test-build-and-test-command:
           filters: *filters
-      - test-pack-and-push-docker-command:
+      - test-pack-and-push-docker-sv-command:
           requires:
             - test-build-and-test-command
+          filters: *filters
+      - test-pack-and-push-docker-dv-command:
+          requires:
+            - test-pack-and-push-docker-sv-command
           filters: *filters
       - test-pack-and-push-helm-command:
           requires:
@@ -101,7 +105,7 @@ workflows:
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
           filters: *filters
-      - dotnet-project/pack_and_push_binaries:
+      - dotnet-project/pack_and_push_binaries_sv:
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
@@ -125,10 +129,11 @@ workflows:
           requires:
             - orb-tools/pack
             - test-build-and-test-command
-            - test-pack-and-push-docker-command
+            - test-pack-and-push-docker-sv-command
+            - test-pack-and-push-docker-dv-command
             - test-pack-and-push-helm-command
             - dotnet-project/build_and_test
-            - dotnet-project/pack_and_push_binaries
+            - dotnet-project/pack_and_push_binaries_sv
           context: orb-publishing
           filters: *release-filters
 

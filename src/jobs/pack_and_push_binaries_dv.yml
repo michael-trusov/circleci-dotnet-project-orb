@@ -62,7 +62,7 @@ steps:
       debug: << parameters.debug >>
       dockerfile: << parameters.dockerfile >>
       docker_context: << parameters.docker_context >>
-      image_name: << parameters.image_name >>      
+      image_name: << parameters.image_name >>
       input_args_folder: << parameters.input_args_folder >>
       input_args_tag_file: << parameters.input_args_tag_file >>
 
