@@ -1,0 +1,28 @@
+description: >
+  This command build and test the project using the .NET SDK Docker image.
+
+parameters:
+  projectSolution:  
+    type: string
+    description: "The path to the solution file, i.e. myProject.sln"
+
+environment:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+
+steps:
+  - checkout
+
+  - run:
+      name: "Build and Test: dotnet enviroment info"
+      command: |
+        dotnet --info
+
+  - run:
+      name: "Build and Test: run build"
+      command: dotnet build << parameters.projectSolution >>
+
+  - run:
+      name: "Build and Test: run tests"
+      command: |
+        dotnet test << parameters.projectSolution >> -p:CollectCoverage=true -p:CoverletOutputFormat=opencover --logger trx --filter FullyQualifiedName\!~IntegrationTest
