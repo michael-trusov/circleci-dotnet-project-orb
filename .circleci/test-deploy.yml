@@ -20,25 +20,75 @@ release-filters: &release-filters
     only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 jobs:
-  # Create jobs to test the commands of your orbs.
-  # You may want to add additional validation steps to ensure the commands are working as expected.
-  command-test:
+  test-build-and-test-command:
     docker:
-      - image: cimg/base:current
+      - image: 'mcr.microsoft.com/dotnet/sdk:8.0'
+    environment:
+      HELM_EXPERIMENTAL_OCI: "1"
     steps:
       - checkout
-      # Run your orb's commands to validate them.
-      - dotnet-project/greet
+
+      - dotnet-project/build_and_test:
+          project_solution: tests/Test.Service/Test.Service.sln          
+
+  test-pack-and-push-docker-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - dotnet-project/pack_and_push_docker:
+          dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
+          docker_context: "tests/Test.Service"
+          image_name: test-service
+          image_tag: "v1.0.0"
+
+  test-pack-and-push-helm-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - dotnet-project/pack_and_push_helm:
+          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_destination: "tests/Test.Service/k8s/helm"
+          helm_chart_name: "test-service"
+          helm_chart_version: "v1.0.0"
+
 workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
-      - command-test:
+      - test-build-and-test-command:
           filters: *filters
-      # The orb must be re-packed for publishing, and saved to the workspace.
+      - test-pack-and-push-docker-command:
+          requires:
+            - test-build-and-test-command
+          filters: *filters
+      - test-pack-and-push-helm-command:
+          requires:
+            - test-pack-and-push-docker-command
+          filters: *filters
+      - dotnet-project/build_and_test:
+          project_solution: tests/Test.Service/Test.Service.sln
+          filters: *filters
+      - dotnet-project/pack_and_push_binaries:
+          dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
+          docker_context: "tests/Test.Service"
+          image_name: test-service
+          image_tag: "v1.0.1"
+          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_destination: "tests/Test.Service/k8s/helm"
+          helm_chart_name: "test-service"
+          helm_chart_version: "v1.0.1"
+          requires:
+            - test-pack-and-push-helm-command
+          filters: *filters
+
       - orb-tools/pack:
           filters: *release-filters
+
       - orb-tools/publish:
           orb_name: mt-lab/dotnet-project
           vcs_type: << pipeline.project.type >>
@@ -46,6 +96,28 @@ workflows:
           # Ensure this job requires all test jobs and the pack job.
           requires:
             - orb-tools/pack
-            - command-test
+            - test-build-and-test-command
+            - test-pack-and-push-docker-command
+            - test-pack-and-push-helm-command
+            - dotnet-project/build_and_test
+            - dotnet-project/pack_and_push_binaries
           context: orb-publishing
           filters: *release-filters
+
+      # The orb must be re-packed for publishing, and saved to the workspace.
+      # - orb-tools/pack:
+      #     filters: *release-filters
+      # - orb-tools/publish:
+      #     orb_name: mt-lab/dotnet-project
+      #     vcs_type: << pipeline.project.type >>
+      #     pub_type: production
+      #     # Ensure this job requires all test jobs and the pack job.
+      #     requires:
+      #       - orb-tools/pack
+      #       - test-build-and-test-command
+      #       - test-pack-and-push-docker-command
+      #       - test-pack-and-push-helm-command
+      #       - dotnet-project/build_and_test
+      #       - dotnet-project/pack_and_push_binaries
+      #     context: orb-publishing
+      #     filters: *release-filters

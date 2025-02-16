@@ -1,0 +1,11 @@
+description: >
+  This is the default executor for .NET projects. It uses the .NET SDK Docker
+  image to run the build and test steps.
+
+docker:
+  - image: 'cimg/base:current'
+
+environment:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  HELM_EXPERIMENTAL_OCI: "1"

@@ -1,0 +1,35 @@
+# --- standard settings ---
+affinity: {}
+autoscaling:
+  enabled: false
+
+image:
+  repository: youtilitycr.azurecr.io
+  pullPolicy: IfNotPresent
+  tag: ""
+imagePullSecrets: []
+  
+ingress:
+  enabled: false
+  tls: []
+
+nodeSelector: {}
+
+podAnnotations: {}
+podSecurityContext: {}
+
+replicaCount: 1
+resources: {}
+restartPolicy: "Always"
+
+securityContext: {}
+service:
+  type: ClusterIP
+  port: 80
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+strategy: "Recreate"
+
+tolerations: []

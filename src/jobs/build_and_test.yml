@@ -1,0 +1,20 @@
+description: >
+  This orb provides ability to build and test .NET projects
+
+executor: dotnet_executor
+
+parameters:
+  debug:
+    type: string
+    default: "false"
+    description: "Enable debug mode. Default is false."
+
+  project_solution:
+    type: string
+    description: "The path to the solution file, i.e. myProject.sln"
+
+steps:
+  - checkout
+
+  - build_and_test:
+      project_solution: << parameters.project_solution >>
