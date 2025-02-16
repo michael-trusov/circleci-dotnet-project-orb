@@ -15,7 +15,7 @@ builder.Services.AddRouting(routeOptions =>
 });
 
 var app = builder.Build();
-          s
+          
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -29,6 +29,16 @@ jobs:
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln          
 
+  test-pack-and-push-docker-command:
+    docker:
+      - image: 'mcr.microsoft.com/dotnet/sdk:8.0'
+    steps:
+      - checkout
+
+      - dotnet-project/pack_and_push_docker:
+          image_name: my-docker-image
+          image_tag: latest          
+
 workflows:
   test-deploy:
     jobs:
