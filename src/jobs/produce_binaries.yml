@@ -25,6 +25,10 @@ parameters:
     type: string
     description: "Helm repository URL"
 
+  helm_chart_destination:
+    type: string
+    description: "Helm chart destination"
+
   helm_chart_name:
     type: string
     description: "Helm chart name"
@@ -45,5 +49,6 @@ steps:
 
   - pack_and_push_helm:
       helm_repo: << parameters.helm_repo >>
+      helm_chart_destination: << parameters.helm_chart_destination >>
       helm_chart_name: << parameters.helm_chart_name >>
       helm_chart_version: << parameters.helm_chart_version >>
