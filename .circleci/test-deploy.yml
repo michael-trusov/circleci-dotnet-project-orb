@@ -46,6 +46,8 @@ workflows:
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - test-build-and-test-command:
           filters: *filters
+      - test-pack-and-push-docker-command:
+          filters: *filters
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
           filters: *release-filters
@@ -57,5 +59,6 @@ workflows:
           requires:
             - orb-tools/pack
             - test-build-and-test-command
+            - test-pack-and-push-docker-command
           context: orb-publishing
           filters: *release-filters
