@@ -28,7 +28,6 @@ steps:
   - run:
       name: "Pack and Push: build '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image"
       environment:
-        CONTAINER_REGISTRY_URL: $ACR_URL
         DOCKERFILE: << parameters.dockerfile >>
         DOCKER_CONTEXT: << parameters.docker_context >>
         IMAGE_NAME: << parameters.image_name >>
@@ -38,9 +37,6 @@ steps:
   - run:
       name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
       environment:
-        CONTAINER_REGISTRY_URL: $ACR_URL
-        CONTAINER_REGISTRY_USERNAME: $ACR_USERNAME
-        CONTAINER_REGISTRY_PASSWORD: $ACR_PASSWORD
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: << parameters.image_tag >>
       command: <<include(scripts/push_docker.sh)>>
