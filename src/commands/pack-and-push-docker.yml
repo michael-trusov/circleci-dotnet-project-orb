@@ -1,0 +1,30 @@
+description: >
+  This command pack binaries in Docker image and push it to the registry. This command expect
+  environment variables ACR_URL, ACR_USERNAME and ACR_PASSWORD to be set in the context.
+
+parameters:
+  imageName:
+    type: string
+    description: "Docker image name"
+  
+  imageTag:
+    type: string
+    description: "Docker image tag"
+
+environment:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+
+steps:
+  - checkout
+
+  - run:
+      name: "Pack and Push: build '<< parameters.imageName >>:<< parameters.imageTag >>' version of docker image"
+      command: |
+        docker build -f Dockerfile -t "$ACR_URL/<< parameters.imageName >>:<< parameters.imageTag >>" .
+
+  - run:
+      name: "Pack and Push: push '<< parameters.imageName >>:<< parameters.imageTag >>' version of docker image to Container Registry"
+      command: |
+        docker login -u $ACR_USERNAME -p $ACR_PASSWORD $ACR_URL
+        docker push $ACR_URL/<< parameters.imageName >>:<< parameters.imageTag >>

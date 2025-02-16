@@ -1,0 +1,36 @@
+description: >
+  This command can produce Helm chart and push it to the Helm repository.
+
+parameters:
+  helmRepo:
+    type: string
+    description: "Helm repository URL"
+  helmChartName:
+    type: string
+    description: "Helm chart name"
+  helmChartVersion:
+    type: string
+    description: "Helm chart version"
+
+environment:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  HELM_EXPERIMENTAL_OCI: "1"
+
+steps:
+  - checkout
+
+  - helm/install-helm-client:
+      version: "v3.2.0"
+
+  - run:
+      name: "Pack and Push: package and publish Helm chart"
+      command: |
+        helmRepoArtifact=<< parameters.helmRepo >>/<< parameters.helmChartName >>:<< parameters.helmChartVersion >>
+
+        # package and publish helm chart
+        helm version
+        helm registry login $ACR_URL --username $ACR_USERNAME --password $ACR_PASSWORD
+        helm package --app-version=<< parameters.helmChartName >>:<< parameters.helmChartVersion >> --version=1.0.0 k8s/helm/<< parameters.helmChartName >>
+        helm chart save << parameters.helmChartName >>-1.0.0.tgz $helmRepoArtifact
+        helm chart push $helmRepoArtifact

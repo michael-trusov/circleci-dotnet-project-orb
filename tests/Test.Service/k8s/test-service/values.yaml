@@ -1,0 +1,37 @@
+# --- standard settings ---
+affinity: {}
+autoscaling:
+  enabled: false
+
+image:
+  repository: michaeltrusov/test-service
+  pullPolicy: Always
+  tag: ""
+imagePullSecrets:
+  - name: dockerhub-secret
+ingress:
+  enabled: false
+  tls: []
+
+namespace: "identity"
+nameOverride: "identity-service"
+nodeSelector: {}
+
+podAnnotations: {}
+podSecurityContext: {}
+
+replicaCount: 1
+resources: {}
+restartPolicy: "Always"
+
+securityContext: {}
+service:
+  type: ClusterIP
+  port: 80
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+strategy: "Recreate"
+
+tolerations: []

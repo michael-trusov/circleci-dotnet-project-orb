@@ -1,7 +1,7 @@
 description: >
   This is the default executor for .NET projects. It uses the .NET SDK Docker
   image to run the build and test steps.
-  
+
 docker:
   - image: 'mcr.microsoft.com/dotnet/sdk:<<parameters.tag>>'
 
