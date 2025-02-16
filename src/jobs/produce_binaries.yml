@@ -1,0 +1,49 @@
+description: >
+  This orb provides ability to build and test .NET projects, also produce Docker images and Helm charts.
+
+executor: dotnet_executor
+
+parameters:
+  debug:
+    type: string
+    default: "false"
+    description: "Enable debug mode. Default is false."
+
+  project_solution:
+    type: string
+    description: "The path to the solution file, i.e. myProject.sln"
+
+  image_name:
+    type: string
+    description: "Docker image name"
+
+  image_tag:
+    type: string
+    description: "Docker image tag"
+
+  helm_repo:
+    type: string
+    description: "Helm repository URL"
+
+  helm_chart_name:
+    type: string
+    description: "Helm chart name"
+
+  helm_chart_version:
+    type: string
+    description: "Helm chart version"
+
+steps:
+  - checkout
+
+  - build_and_test:
+      project_solution: << parameters.project_solution >>
+
+  - pack_and_push_docker:
+      image_name: << parameters.image_name >>
+      image_tag: << parameters.image_tag >>
+
+  - pack_and_push_helm:
+      helm_repo: << parameters.helm_repo >>
+      helm_chart_name: << parameters.helm_chart_name >>
+      helm_chart_version: << parameters.helm_chart_version >>
