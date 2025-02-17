@@ -71,6 +71,11 @@ jobs:
           input_args_folder: "dotnet"
           input_args_tag_file: "image_tag"
 
+      - persist_to_workspace:
+          root: /home/circleci/dotnet
+          paths:
+          - image_tag
+
   test-pack-and-push-helm-sv-command:
     docker:
       - image: 'cimg/base:current'
