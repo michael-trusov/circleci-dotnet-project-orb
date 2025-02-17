@@ -88,6 +88,28 @@ jobs:
           helm_chart_name: "test-service"
           helm_chart_version: "v1.0.1"
 
+  prepare-file-with-tag:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - run: 
+          name: "Create dotnet workspace"
+          command: |
+            mkdir -p /home/circleci/tmp
+
+      - attach_workspace:
+          at: /home/circleci
+
+      - run:
+          name: "Create file with version"
+          command: |
+            echo "v1.0.1" > /home/circleci/tmp/image_tag
+
+      - persist_to_workspace:
+          root: /home/circleci/tmp
+          paths:
+          - image_tag
+
   test-pack-and-push-helm-dv-command:
     docker:
       - image: 'cimg/base:current'
@@ -156,18 +178,24 @@ workflows:
           requires:
             - dotnet-project/build_and_test
           filters: *filters
+      - prepare-file-with-tag:
+          requires:
+            - dotnet-project/pack_and_push_binaries_sv
+          filters: *filters
       - dotnet-project/pack_and_push_binaries_dv:
           attached_workspace: "/home/circleci"
+          debug: "true"
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
-          input_args_folder: "dotnet"
+          input_args_folder: "tmp"
           input_args_tag_file: "image_tag"          
           helm_repo: "youtilitycr.azurecr.io/helm/alpha"
           helm_chart_destination: "tests/Test.Service/k8s/helm"
           helm_chart_name: "test-service"          
           requires:
             - dotnet-project/pack_and_push_binaries_sv
+            - prepare-file-with-tag
           filters: *filters
 
       - orb-tools/pack:
