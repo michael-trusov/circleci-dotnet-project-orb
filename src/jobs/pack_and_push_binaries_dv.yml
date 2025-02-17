@@ -52,6 +52,9 @@ parameters:
 steps:
   - checkout
 
+  - attach_workspace:
+      at: << parameters.attached_workspace >>
+
   - pack_and_push_docker_dv:
       attached_workspace: << parameters.attached_workspace >>
       debug: << parameters.debug >>

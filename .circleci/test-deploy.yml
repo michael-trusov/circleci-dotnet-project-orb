@@ -183,25 +183,8 @@ workflows:
           requires:
             - dotnet-project/pack_and_push_binaries_sv
           filters: *filters
-      - dotnet-project/pack_and_push_binaries_dv:
-          attached_workspace: "/home/circleci/tmp"
-          debug: "true"
-          dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
-          docker_context: "tests/Test.Service"
-          image_name: test-service
-          input_args_folder: "versions"
-          input_args_tag_file: "image_tag"          
-          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
-          helm_chart_destination: "tests/Test.Service/k8s/helm"
-          helm_chart_name: "test-service"          
-          requires:
-            - dotnet-project/pack_and_push_binaries_sv
-            - prepare-file-with-tag
-          filters: *filters
-
       - orb-tools/pack:
           filters: *release-filters
-
       - orb-tools/publish:
           orb_name: mt-lab/dotnet-project
           vcs_type: << pipeline.project.type >>
