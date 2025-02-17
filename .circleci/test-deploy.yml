@@ -60,7 +60,7 @@ jobs:
       - run:
           name: "Create file with version"
           command: |
-            echo "v1.0.2" > /home/circleci/dotnet/image_tag
+            echo "v1.0.1" > /home/circleci/dotnet/image_tag
 
       - dotnet-project/pack_and_push_docker_dv:
           attached_workspace: "/home/circleci"
@@ -71,17 +71,45 @@ jobs:
           input_args_folder: "dotnet"
           input_args_tag_file: "image_tag"
 
-  test-pack-and-push-helm-command:
+  test-pack-and-push-helm-sv-command:
     docker:
       - image: 'cimg/base:current'
     steps:
       - checkout
 
-      - dotnet-project/pack_and_push_helm:
+      - dotnet-project/pack_and_push_helm_sv:
           helm_repo: "youtilitycr.azurecr.io/helm/alpha"
           helm_chart_destination: "tests/Test.Service/k8s/helm"
           helm_chart_name: "test-service"
-          helm_chart_version: "v1.0.0"
+          helm_chart_version: "v1.0.1"
+
+  test-pack-and-push-helm-dv-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - run: 
+          name: "Create dotnet workspace"
+          command: |
+            mkdir -p /home/circleci/dotnet
+
+      - attach_workspace:
+          at: /home/circleci
+
+      - run:
+          name: "Create file with version"
+          command: |
+            echo "v1.0.1" > /home/circleci/dotnet/image_tag
+
+      - dotnet-project/pack_and_push_helm_dv:
+          attached_workspace: "/home/circleci"
+          debug: "true"
+          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_destination: "tests/Test.Service/k8s/helm"
+          helm_chart_name: "test-service"
+          input_args_folder: "dotnet"
+          input_args_tag_file: "image_tag"          
 
 workflows:
   test-deploy:
@@ -98,9 +126,13 @@ workflows:
           requires:
             - test-pack-and-push-docker-sv-command
           filters: *filters
-      - test-pack-and-push-helm-command:
+      - test-pack-and-push-helm-sv-command:
           requires:
             - test-pack-and-push-docker-dv-command
+          filters: *filters
+      - test-pack-and-push-helm-dv-command:
+          requires:
+            - test-pack-and-push-helm-sv-command
           filters: *filters
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
@@ -116,6 +148,19 @@ workflows:
           helm_chart_version: "v1.0.1"
           requires:
             - test-pack-and-push-helm-command
+          filters: *filters
+      - dotnet-project/pack_and_push_binaries_dv:
+          attached_workspace: "/home/circleci"
+          dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
+          docker_context: "tests/Test.Service"
+          image_name: test-service
+          input_args_folder: "dotnet"
+          input_args_tag_file: "image_tag"          
+          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_destination: "tests/Test.Service/k8s/helm"
+          helm_chart_name: "test-service"          
+          requires:
+            - dotnet-project/pack_and_push_binaries_sv
           filters: *filters
 
       - orb-tools/pack:
@@ -134,6 +179,7 @@ workflows:
             - test-pack-and-push-helm-command
             - dotnet-project/build_and_test
             - dotnet-project/pack_and_push_binaries_sv
+            - dotnet-project/pack_and_push_binaries_dv
           context: orb-publishing
           filters: *release-filters
 

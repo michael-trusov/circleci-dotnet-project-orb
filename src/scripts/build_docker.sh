@@ -1,11 +1,6 @@
 #!/bin/bash
 #shellcheck disable=all
 
-### Description
-###   This function print message if INPUT_PARAM_DEBUG is set to 'true'
-###
-### Parameters:
-###   $1 - message
 debug_message() {
     local message=$1
 

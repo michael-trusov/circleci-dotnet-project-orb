@@ -49,11 +49,6 @@ parameters:
     type: string
     description: "Helm chart name"
 
-  helm_chart_version:
-    type: string
-    default: ""
-    description: "Helm chart version"
-
 steps:
   - checkout
 
@@ -66,8 +61,11 @@ steps:
       input_args_folder: << parameters.input_args_folder >>
       input_args_tag_file: << parameters.input_args_tag_file >>
 
-  - pack_and_push_helm:
+  - pack_and_push_helm_dv:
+      attached_workspace: << parameters.attached_workspace >>
+      debug: << parameters.debug >>
       helm_repo: << parameters.helm_repo >>
       helm_chart_destination: << parameters.helm_chart_destination >>
       helm_chart_name: << parameters.helm_chart_name >>
-      helm_chart_version: << parameters.helm_chart_version >>
+      input_args_folder: << parameters.input_args_folder >>
+      input_args_tag_file: << parameters.input_args_tag_file >>
