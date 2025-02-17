@@ -89,6 +89,7 @@ jobs:
           helm_chart_version: "v1.0.1"
 
   prepare-file-with-tag:
+    working_directory: /home/circleci
     docker:
       - image: 'cimg/base:current'
     steps:
@@ -98,7 +99,7 @@ jobs:
             mkdir -p /home/circleci/tmp
 
       - attach_workspace:
-          at: /home/circleci
+          at: /home/circleci/tmp
 
       - run:
           name: "Create file with version"
