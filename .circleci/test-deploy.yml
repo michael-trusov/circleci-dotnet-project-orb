@@ -179,10 +179,6 @@ workflows:
           requires:
             - dotnet-project/build_and_test
           filters: *filters
-      - prepare-file-with-tag:
-          requires:
-            - dotnet-project/pack_and_push_binaries_sv
-          filters: *filters
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
@@ -198,7 +194,6 @@ workflows:
             - test-pack-and-push-helm-sv-command
             - test-pack-and-push-helm-dv-command
             - dotnet-project/build_and_test
-            - dotnet-project/pack_and_push_binaries_sv
-            - dotnet-project/pack_and_push_binaries_dv
+            - dotnet-project/pack_and_push_binaries_sv            
           context: orb-publishing
           filters: *release-filters
