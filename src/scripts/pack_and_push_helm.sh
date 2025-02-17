@@ -1,6 +1,28 @@
 #!/bin/bash
 #shellcheck disable=all
 
+debug_message() {
+    local message=$1
+
+    if [[ "${INPUT_PARAM_DEBUG}" == "true" ]]; then
+        echo "[DEBUG] $message"
+    fi
+}
+
+if [ -z "$HELM_CHART_VERSION" ]; then
+    if [ -z "${INPUT_TAG_FILE}" ]; then
+        debug_message "IMAGE_TAG is not specified and file with tag information is not provided."
+        exit 1
+    elif [ ! -f "${INPUT_TAG_FILE}" ]; then
+        debug_message "INPUT_TAG_FILE '${INPUT_TAG_FILE}' does not exist."
+        exit 1
+    else
+        HELM_CHART_VERSION=$(tr -d ' ' < "${INPUT_TAG_FILE}")
+        debug_message "HELM_CHART_VERSION is set to '${HELM_CHART_VERSION}' from file '${INPUT_TAG_FILE}'."
+    fi
+fi
+
+
 helmRepoArtifact="${HELM_REPO}/${HELM_CHART_NAME}:${HELM_CHART_VERSION}"
 
 # package and publish helm chart

@@ -31,29 +31,113 @@ jobs:
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln          
 
-  test-pack-and-push-docker-command:
+  test-pack-and-push-docker-sv-command:
     docker:
       - image: 'cimg/base:current'
     steps:
       - checkout
 
-      - dotnet-project/pack_and_push_docker:
+      - dotnet-project/pack_and_push_docker_sv:
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
           image_tag: "v1.0.0"
 
-  test-pack-and-push-helm-command:
+  test-pack-and-push-docker-dv-command:
     docker:
       - image: 'cimg/base:current'
     steps:
       - checkout
 
-      - dotnet-project/pack_and_push_helm:
+      - run: 
+          name: "Create dotnet workspace"
+          command: |
+            mkdir -p /home/circleci/dotnet
+
+      - attach_workspace:
+          at: /home/circleci
+
+      - run:
+          name: "Create file with version"
+          command: |
+            echo "v1.0.1" > /home/circleci/dotnet/image_tag
+
+      - dotnet-project/pack_and_push_docker_dv:
+          attached_workspace: "/home/circleci"
+          debug: "true"
+          dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
+          docker_context: "tests/Test.Service"
+          image_name: test-service          
+          input_args_folder: "dotnet"
+          input_args_tag_file: "image_tag"
+
+      - persist_to_workspace:
+          root: /home/circleci/dotnet
+          paths:
+          - image_tag
+
+  test-pack-and-push-helm-sv-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - dotnet-project/pack_and_push_helm_sv:
           helm_repo: "youtilitycr.azurecr.io/helm/alpha"
           helm_chart_destination: "tests/Test.Service/k8s/helm"
           helm_chart_name: "test-service"
-          helm_chart_version: "v1.0.0"
+          helm_chart_version: "v1.0.1"
+
+  prepare-file-with-tag:
+    working_directory: /home/circleci
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - run: 
+          name: "Create dotnet workspace"
+          command: |
+            mkdir -p /home/circleci/tmp/versions
+
+      - attach_workspace:
+          at: /home/circleci/tmp
+
+      - run:
+          name: "Create file with version"
+          command: |
+            echo "v1.0.1" > /home/circleci/tmp/versions/image_tag
+
+      - persist_to_workspace:
+          root: /home/circleci/tmp/versions
+          paths:
+          - image_tag
+
+  test-pack-and-push-helm-dv-command:
+    docker:
+      - image: 'cimg/base:current'
+    steps:
+      - checkout
+
+      - run: 
+          name: "Create dotnet workspace"
+          command: |
+            mkdir -p /home/circleci/dotnet
+
+      - attach_workspace:
+          at: /home/circleci
+
+      - run:
+          name: "Create file with version"
+          command: |
+            echo "v1.0.1" > /home/circleci/dotnet/image_tag
+
+      - dotnet-project/pack_and_push_helm_dv:
+          attached_workspace: "/home/circleci"
+          debug: "true"
+          helm_repo: "youtilitycr.azurecr.io/helm/alpha"
+          helm_chart_destination: "tests/Test.Service/k8s/helm"
+          helm_chart_name: "test-service"
+          input_args_folder: "dotnet"
+          input_args_tag_file: "image_tag"          
 
 workflows:
   test-deploy:
@@ -62,18 +146,28 @@ workflows:
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - test-build-and-test-command:
           filters: *filters
-      - test-pack-and-push-docker-command:
+      - test-pack-and-push-docker-sv-command:
           requires:
             - test-build-and-test-command
           filters: *filters
-      - test-pack-and-push-helm-command:
+      - test-pack-and-push-docker-dv-command:
           requires:
-            - test-pack-and-push-docker-command
+            - test-pack-and-push-docker-sv-command
+          filters: *filters
+      - test-pack-and-push-helm-sv-command:
+          requires:
+            - test-pack-and-push-docker-dv-command
+          filters: *filters
+      - test-pack-and-push-helm-dv-command:
+          requires:
+            - test-pack-and-push-helm-sv-command
           filters: *filters
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
+          requires:
+            - test-pack-and-push-helm-dv-command
           filters: *filters
-      - dotnet-project/pack_and_push_binaries:
+      - dotnet-project/pack_and_push_binaries_sv:
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
           docker_context: "tests/Test.Service"
           image_name: test-service
@@ -83,12 +177,10 @@ workflows:
           helm_chart_name: "test-service"
           helm_chart_version: "v1.0.1"
           requires:
-            - test-pack-and-push-helm-command
+            - dotnet-project/build_and_test
           filters: *filters
-
       - orb-tools/pack:
           filters: *release-filters
-
       - orb-tools/publish:
           orb_name: mt-lab/dotnet-project
           vcs_type: << pipeline.project.type >>
@@ -97,27 +189,11 @@ workflows:
           requires:
             - orb-tools/pack
             - test-build-and-test-command
-            - test-pack-and-push-docker-command
-            - test-pack-and-push-helm-command
+            - test-pack-and-push-docker-sv-command
+            - test-pack-and-push-docker-dv-command
+            - test-pack-and-push-helm-sv-command
+            - test-pack-and-push-helm-dv-command
             - dotnet-project/build_and_test
-            - dotnet-project/pack_and_push_binaries
+            - dotnet-project/pack_and_push_binaries_sv            
           context: orb-publishing
           filters: *release-filters
-
-      # The orb must be re-packed for publishing, and saved to the workspace.
-      # - orb-tools/pack:
-      #     filters: *release-filters
-      # - orb-tools/publish:
-      #     orb_name: mt-lab/dotnet-project
-      #     vcs_type: << pipeline.project.type >>
-      #     pub_type: production
-      #     # Ensure this job requires all test jobs and the pack job.
-      #     requires:
-      #       - orb-tools/pack
-      #       - test-build-and-test-command
-      #       - test-pack-and-push-docker-command
-      #       - test-pack-and-push-helm-command
-      #       - dotnet-project/build_and_test
-      #       - dotnet-project/pack_and_push_binaries
-      #     context: orb-publishing
-      #     filters: *release-filters

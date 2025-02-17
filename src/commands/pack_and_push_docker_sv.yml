@@ -1,0 +1,43 @@
+description: >
+  This command pack binaries in Docker image and push it to the registry. This command expect
+  environment variables ACR_URL, ACR_USERNAME and ACR_PASSWORD to be set in the context.
+  Note: '_sv' suffix means 'static version', version that should be passed via parameter.
+
+parameters:
+  dockerfile:
+    type: string
+    default: "Dockerfile"
+    description: "Path to the Dockerfile"
+
+  docker_context:
+    type: string
+    default: "."
+    description: "Path to the Docker context"
+
+  image_name:
+    type: string
+    description: "Docker image name"
+
+  image_tag:
+    type: string
+    description: "Docker image tag"
+
+steps:
+  - checkout
+  - setup_remote_docker
+
+  - run:
+      name: "Pack and Push: build '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image"
+      environment:
+        DOCKERFILE: << parameters.dockerfile >>
+        DOCKER_CONTEXT: << parameters.docker_context >>
+        IMAGE_NAME: << parameters.image_name >>
+        IMAGE_TAG: << parameters.image_tag >>
+      command: <<include(scripts/build_docker.sh)>>
+
+  - run:
+      name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
+      environment:
+        IMAGE_NAME: << parameters.image_name >>
+        IMAGE_TAG: << parameters.image_tag >>
+      command: <<include(scripts/push_docker.sh)>>
