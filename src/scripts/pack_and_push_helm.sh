@@ -18,6 +18,8 @@ if [ -z "$HELM_CHART_VERSION" ]; then
         exit 1
     else
         HELM_CHART_VERSION=$(tr -d ' ' < "${INPUT_TAG_FILE}")
+        # Remove the 'v' prefix if it exists
+        HELM_CHART_VERSION="${HELM_CHART_VERSION#v}"
         debug_message "HELM_CHART_VERSION is set to '${HELM_CHART_VERSION}' from file '${INPUT_TAG_FILE}'."
     fi
 fi
