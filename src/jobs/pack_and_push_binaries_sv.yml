@@ -56,7 +56,7 @@ steps:
       image_name: << parameters.image_name >>
       image_tag: << parameters.image_tag >>
 
-  - pack_and_push_helm:
+  - pack_and_push_helm_sv:
       helm_repo: << parameters.helm_repo >>
       helm_chart_destination: << parameters.helm_chart_destination >>
       helm_chart_name: << parameters.helm_chart_name >>

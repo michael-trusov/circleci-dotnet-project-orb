@@ -49,7 +49,7 @@ steps:
       environment:
         HELM_REPO: << parameters.helm_repo >>
         HELM_CHART_DESTINATION: << parameters.helm_chart_destination >>
-        HELM_CHART_NAME: << parameters.helm_chart_name >>        
+        HELM_CHART_NAME: << parameters.helm_chart_name >>
         HELM_EXPERIMENTAL_OCI: "1"
         INPUT_PARAM_DEBUG: << parameters.debug >>
         INPUT_TAG_FILE: << parameters.attached_workspace >>/<< parameters.input_args_folder >>/<< parameters.input_args_tag_file >>
