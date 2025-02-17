@@ -178,7 +178,8 @@ workflows:
             - test-build-and-test-command
             - test-pack-and-push-docker-sv-command
             - test-pack-and-push-docker-dv-command
-            - test-pack-and-push-helm-command
+            - test-pack-and-push-helm-sv-command
+            - test-pack-and-push-helm-dv-command
             - dotnet-project/build_and_test
             - dotnet-project/pack_and_push_binaries_sv
             - dotnet-project/pack_and_push_binaries_dv
