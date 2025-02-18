@@ -18,3 +18,4 @@ steps:
 
   - build_and_test:
       project_solution: << parameters.project_solution >>
+      git_submodules: "false"
