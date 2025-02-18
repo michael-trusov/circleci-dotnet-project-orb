@@ -22,7 +22,7 @@ steps:
             name: "Init git submodules"
             command: git submodule update --init --recursive
   - unless:
-      condition: 
+      condition:
         equal: [ "false", << parameters.init_git_submodules >> ]
       steps:
         - checkout
