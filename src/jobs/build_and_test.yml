@@ -37,5 +37,4 @@ steps:
        - checkout
 
   - build_and_test:
-      project_solution: << parameters.project_solution >>
-      init_git_submodules: << parameters.init_git_submodules >>
+      project_solution: << parameters.project_solution >>      
