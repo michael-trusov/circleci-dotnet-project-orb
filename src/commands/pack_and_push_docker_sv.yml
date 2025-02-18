@@ -4,6 +4,11 @@ description: >
   Note: '_sv' suffix means 'static version', version that should be passed via parameter.
 
 parameters:
+  debug:
+    type: string
+    default: "false"
+    description: "Enable debug mode. Default is false."
+
   dockerfile:
     type: string
     default: "Dockerfile"
@@ -13,6 +18,11 @@ parameters:
     type: string
     default: "."
     description: "Path to the Docker context"
+
+  docker_repository:
+    type: string
+    default: ""
+    description: "Docker repository"
 
   image_name:
     type: string
@@ -31,13 +41,17 @@ steps:
       environment:
         DOCKERFILE: << parameters.dockerfile >>
         DOCKER_CONTEXT: << parameters.docker_context >>
+        DOCKER_REPOSITORY: << parameters.docker_repository >>
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: << parameters.image_tag >>
+        INPUT_PARAM_DEBUG: << parameters.debug >>
       command: <<include(scripts/build_docker.sh)>>
 
   - run:
       name: "Pack and Push: push '<< parameters.image_name >>:<< parameters.image_tag >>' version of docker image to Container Registry"
       environment:
+        DOCKER_REPOSITORY: << parameters.docker_repository >>
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: << parameters.image_tag >>
+        INPUT_PARAM_DEBUG: << parameters.debug >>
       command: <<include(scripts/push_docker.sh)>>

@@ -22,4 +22,11 @@ if [ -z "$IMAGE_TAG" ]; then
     fi
 fi
 
-docker build -f ${DOCKERFILE} -t ${ACR_URL}/${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_CONTEXT}
+if [ -z "$DOCKER_REPOSITORY" ]; then
+    debug_message "DOCKER_REPOSITORY is not specified. Value of IMAGE_TAG (${IMAGE_TAG}) will be used."
+    
+    DOCKER_REPOSITORY=${IMAGE_NAME}
+fi
+
+
+docker build -f ${DOCKERFILE} -t ${ACR_URL}/${DOCKER_REPOSITORY}:${IMAGE_TAG} ${DOCKER_CONTEXT}

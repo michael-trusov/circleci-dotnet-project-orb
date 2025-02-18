@@ -26,6 +26,11 @@ parameters:
     default: "."
     description: "Path to the Docker context"
 
+  docker_repository:
+    type: string
+    default: ""
+    description: "Docker repository"
+
   image_name:
     type: string
     description: "Docker image name"
@@ -52,6 +57,7 @@ steps:
       environment:
         DOCKERFILE: << parameters.dockerfile >>
         DOCKER_CONTEXT: << parameters.docker_context >>
+        DOCKER_REPOSITORY: << parameters.docker_repository >>
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: ""
         INPUT_PARAM_DEBUG: << parameters.debug >>
@@ -61,6 +67,7 @@ steps:
   - run:
       name: "Pack and Push: push version of docker image to Container Registry"
       environment:
+        DOCKER_REPOSITORY: << parameters.docker_repository >>
         IMAGE_NAME: << parameters.image_name >>
         IMAGE_TAG: ""
         INPUT_PARAM_DEBUG: << parameters.debug >>
