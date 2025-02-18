@@ -6,14 +6,14 @@ parameters:
     type: string
     description: "The path to the solution file, i.e. myProject.sln"
 
-  load_git_submodules:
+  init_git_submodules:
     type: boolean
     default: false
     description: "Load git submodules. Default is false."
 
 steps:
   - when:
-      condition: << parameters.load_git_submodules >>
+      condition: << parameters.init_git_submodules >>
       steps:
         - checkout
 
@@ -21,7 +21,7 @@ steps:
             name: "Init git submodules"
             command: git submodule update --init --recursive
   - unless:
-      condition: << parameters.load_git_submodules >>
+      condition: << parameters.init_git_submodules >>
       steps:
         - checkout
 

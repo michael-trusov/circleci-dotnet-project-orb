@@ -29,7 +29,8 @@ jobs:
       - checkout
 
       - dotnet-project/build_and_test:
-          project_solution: tests/Test.Service/Test.Service.sln          
+          project_solution: tests/Test.Service/Test.Service.sln
+          init_git_submodules: false
 
   test-pack-and-push-docker-sv-command:
     docker:
@@ -88,29 +89,6 @@ jobs:
           helm_chart_name: "test-service"
           helm_chart_version: "v1.0.1"
 
-  prepare-file-with-tag:
-    working_directory: /home/circleci
-    docker:
-      - image: 'cimg/base:current'
-    steps:
-      - run: 
-          name: "Create dotnet workspace"
-          command: |
-            mkdir -p /home/circleci/tmp/versions
-
-      - attach_workspace:
-          at: /home/circleci/tmp
-
-      - run:
-          name: "Create file with version"
-          command: |
-            echo "v1.0.1" > /home/circleci/tmp/versions/image_tag
-
-      - persist_to_workspace:
-          root: /home/circleci/tmp/versions
-          paths:
-          - image_tag
-
   test-pack-and-push-helm-dv-command:
     docker:
       - image: 'cimg/base:current'
@@ -142,8 +120,6 @@ jobs:
 workflows:
   test-deploy:
     jobs:
-      # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
-      # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - test-build-and-test-command:
           filters: *filters
       - test-pack-and-push-docker-sv-command:
@@ -164,6 +140,7 @@ workflows:
           filters: *filters
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
+          init_git_submodules: false
           requires:
             - test-pack-and-push-helm-dv-command
           filters: *filters
