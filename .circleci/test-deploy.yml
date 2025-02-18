@@ -29,8 +29,7 @@ jobs:
       - checkout
 
       - dotnet-project/build_and_test:
-          project_solution: tests/Test.Service/Test.Service.sln
-          init_git_submodules: false
+          project_solution: tests/Test.Service/Test.Service.sln          
 
   test-pack-and-push-docker-sv-command:
     docker:

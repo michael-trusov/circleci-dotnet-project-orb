@@ -46,9 +46,6 @@ parameters:
     description: "File with image tag"
 
 steps:
-  - checkout
-  - setup_remote_docker
-
   - attach_workspace:
       at: << parameters.attached_workspace >>
 

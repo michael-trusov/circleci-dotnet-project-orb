@@ -49,6 +49,7 @@ parameters:
 
 steps:
   - checkout
+  - setup_remote_docker
 
   - pack_and_push_docker_sv:
       dockerfile: << parameters.dockerfile >>
