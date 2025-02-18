@@ -13,9 +13,12 @@ parameters:
     type: string
     description: "The path to the solution file, i.e. myProject.sln"
 
-steps:
-  - checkout
+  init_git_submodules:
+    type: boolean
+    description: "Load git submodules. Default is false."
+    default: false
 
+steps:
   - build_and_test:
       project_solution: << parameters.project_solution >>
-      git_submodules: "false"
+      init_git_submodules: << parameters.init_git_submodules >>
