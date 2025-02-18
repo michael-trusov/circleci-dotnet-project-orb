@@ -30,7 +30,7 @@ jobs:
 
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
-          init_git_submodules: false
+          init_git_submodules: "false"
 
   test-pack-and-push-docker-sv-command:
     docker:
@@ -140,7 +140,7 @@ workflows:
           filters: *filters
       - dotnet-project/build_and_test:
           project_solution: tests/Test.Service/Test.Service.sln
-          init_git_submodules: false
+          init_git_submodules: "false"
           requires:
             - test-pack-and-push-helm-dv-command
           filters: *filters
