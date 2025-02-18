@@ -5,29 +5,7 @@ parameters:
   project_solution:
     type: string
     description: "The path to the solution file, i.e. myProject.sln"
-
-  init_git_submodules:
-    type: boolean
-    description: "Load git submodules. Default is false."
-
 steps:
-  - when:
-      condition: << parameters.init_git_submodules >>
-      steps:
-        - run:
-            name: Installing SSH client
-            command: <<include(scripts/install_ssh.sh)>>
-
-        - checkout
-
-        - run:
-            name: "Init git submodules"
-            command: git submodule update --init --recursive
-  - unless:
-      condition: << parameters.init_git_submodules >>
-      steps:
-       - checkout
-
   - run:
       name: "Build and Test: dotnet enviroment info"
       command: |

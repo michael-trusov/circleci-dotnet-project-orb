@@ -29,14 +29,14 @@ jobs:
       - checkout
 
       - dotnet-project/build_and_test:
-          project_solution: tests/Test.Service/Test.Service.sln
-          init_git_submodules: false
+          project_solution: tests/Test.Service/Test.Service.sln          
 
   test-pack-and-push-docker-sv-command:
     docker:
       - image: 'cimg/base:current'
     steps:
       - checkout
+      - setup_remote_docker
 
       - dotnet-project/pack_and_push_docker_sv:
           dockerfile: "tests/Test.Service/src/Test.Service.Api/Dockerfile"
@@ -49,6 +49,7 @@ jobs:
       - image: 'cimg/base:current'
     steps:
       - checkout
+      - setup_remote_docker
 
       - run: 
           name: "Create dotnet workspace"
@@ -81,7 +82,7 @@ jobs:
     docker:
       - image: 'cimg/base:current'
     steps:
-      - checkout
+      - checkout      
 
       - dotnet-project/pack_and_push_helm_sv:
           helm_repo: "youtilitycr.azurecr.io/helm/alpha"

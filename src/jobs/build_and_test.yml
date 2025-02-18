@@ -19,6 +19,22 @@ parameters:
     default: false
 
 steps:
+  - when:
+      condition: << parameters.init_git_submodules >>
+      steps:
+        - run:
+            name: Installing SSH client
+            command: <<include(scripts/install_ssh.sh)>>
+
+        - checkout
+
+        - run:
+            name: "Init git submodules"
+            command: git submodule update --init --recursive
+  - unless:
+      condition: << parameters.init_git_submodules >>
+      steps:
+        - checkout
+
   - build_and_test:
       project_solution: << parameters.project_solution >>
-      init_git_submodules: << parameters.init_git_submodules >>
