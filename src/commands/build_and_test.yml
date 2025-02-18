@@ -14,6 +14,13 @@ steps:
   - when:
       condition: << parameters.init_git_submodules >>
       steps:
+        - run:
+            name: Installing SSH client
+            command: |
+              apt update && apt upgrade -y
+              apt install -y default-jre
+              apt update && apt install -y openssh-client      
+        
         - checkout
 
         - run:
