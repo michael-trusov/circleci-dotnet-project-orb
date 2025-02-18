@@ -19,7 +19,7 @@ steps:
 
         - run:
             name: "Init git submodules"
-            command: git submodule update --init --recursive
+            command: echo "123" #git submodule update --init --recursive
   - unless:
       condition: << parameters.init_git_submodules >>
       steps:
