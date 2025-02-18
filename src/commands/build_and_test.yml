@@ -7,7 +7,7 @@ parameters:
     description: "The path to the solution file, i.e. myProject.sln"
 
   git_submodules:
-    type: string    
+    type: string
     description: "Load git submodules. Default is false."
 
 steps:
