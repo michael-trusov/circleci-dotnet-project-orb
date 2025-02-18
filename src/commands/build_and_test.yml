@@ -14,7 +14,7 @@ parameters:
 steps:
   - when:
       condition:
-        equal: [ "true", << parameters.init_git_submodules >> ]
+        equal: [ "true", "<< parameters.init_git_submodules >>" ]
       steps:
         - checkout
 
@@ -23,7 +23,7 @@ steps:
             command: git submodule update --init --recursive
   - unless:
       condition:
-        equal: [ "false", << parameters.init_git_submodules >> ]
+        equal: [ "false", "<< parameters.init_git_submodules >>" ]
       steps:
         - checkout
 
