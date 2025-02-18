@@ -61,4 +61,5 @@ steps:
       helm_repo: << parameters.helm_repo >>
       helm_chart_destination: << parameters.helm_chart_destination >>
       helm_chart_name: << parameters.helm_chart_name >>
+      helm_chart_folder: << parameters.helm_chart_name >>
       helm_chart_version: << parameters.helm_chart_version >>
