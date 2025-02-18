@@ -6,8 +6,24 @@ parameters:
     type: string
     description: "The path to the solution file, i.e. myProject.sln"
 
+  load_git_submodules:
+    type: boolean
+    default: false
+    description: "Load git submodules. Default is false."
+
 steps:
-  - checkout
+  - when:
+      condition: << parameters.load_git_submodules >>
+      steps:
+        - checkout
+
+        - run:
+            name: "Init git submodules"
+            command: git submodule update --init --recursive
+  - unless:
+      condition: << parameters.load_git_submodules >>
+      steps:   
+        - checkout
 
   - run:
       name: "Build and Test: dotnet enviroment info"
