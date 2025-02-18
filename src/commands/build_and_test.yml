@@ -16,11 +16,8 @@ steps:
       steps:
         - run:
             name: Installing SSH client
-            command: |
-              apt update && apt upgrade -y
-              apt install -y default-jre
-              apt update && apt install -y openssh-client      
-        
+            command: <<include(scripts/install_ssh.sh)>>
+
         - checkout
 
         - run:
