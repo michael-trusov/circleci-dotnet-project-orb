@@ -34,7 +34,7 @@ steps:
   - unless:
       condition: << parameters.init_git_submodules >>
       steps:
-       - checkout
+        - checkout
 
   - build_and_test:
-      project_solution: << parameters.project_solution >>      
+      project_solution: << parameters.project_solution >>
